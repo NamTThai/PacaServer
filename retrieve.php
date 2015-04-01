@@ -13,6 +13,6 @@ require_once 'class.Picture.php';
         array_push($allPictures, $head->getAddress());
     }
 
-    var_dump($allPictures);
+    echo json_encode($allPictures);
 
 ?>
