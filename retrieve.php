@@ -1,8 +1,7 @@
 <?php
 
-// This file is a simple HTTP GET to retrieve all links to pictures in the Pictures directory
-$test_url = "Your beloved server says hi :D";
+require_once 'class.Picture.php';
 
-echo $test_url;
+    $file = fopen("../Pictures/data.Head.php", "w");
 
 ?>
