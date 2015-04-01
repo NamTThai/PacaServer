@@ -3,12 +3,13 @@
 require_once 'class.Picture.php';
 
     $allPictures = scandir('../Pictures');
-    $head = new Picture($allPictures[10]);
+    $head = new Picture("../Pictures/".$allPictures[10]);
     $current = $head;
-    foreach($allPictures as $picture) {
+    for ($i = 0; $i < 10; $i++) {
+        $picture = $allPictures[$i];
         $pathinfo = pathinfo($picture);
         if ($pathinfo['extension'] == 'jpg') {
-            $next = new Picture($picture);
+            $next = new Picture("../Pictures/".$picture);
             $current->setNext($next);
             $current = $next;
         }
@@ -18,5 +19,7 @@ require_once 'class.Picture.php';
     $file = fopen("../Pictures/data.Head.php", "w");
     fwrite($file, $objData);
     fclose($file);
+
+    echo "works";
 
 ?>
