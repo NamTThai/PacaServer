@@ -1,4 +1,4 @@
 # PacaServer
 
 * File name convention:
-`timestamp_locationstamp_hashfunctionoffilename`
+`timestamp_locationstamp_filename`
