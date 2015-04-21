@@ -8,12 +8,13 @@ class PacaDb {
     private $db_table;
 
     // open a connection to the database
-    public function __construct($database='paca', $table='PacaAddress') {
-        $db_host = ini_get("mysql.default_host");
-        $db_user = ini_get("mysql.default_user");
-        $db_pass = ini_get("mysql.default_password");
-        $this->db_name=$database;
-        $this->db_table=$table;
+    public function __construct() {
+        $paca_ini = parse_ini_file("/etc/php5/apache2/conf.d/paca.ini");
+        $db_host = $paca_ini["paca_host"];
+        $db_user = $paca_ini["paca_user"];
+        $db_pass = $paca_ini["paca_password"];
+        $this->db_name = $paca_ini["paca_database"];
+        $this->db_table = $paca_ini["paca_table"];
         $this->db = new mysqli($db_host, $db_user, $db_pass, $this->db_name);
         if ($this->db->connect_error) {
             die("Connection failed: " . $this->db->connect_error);
