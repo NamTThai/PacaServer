@@ -3,36 +3,42 @@
 //Database class
 class PacaDb {
 
-    private $db_name;
     private $db;
+    private $db_name;
+    private $db_table;
 
     // open a connection to the database
-    public function __construct($database='paca') {
+    public function __construct($database='paca', $table='PacaAddress') {
         $db_host = ini_get("mysql.default_host");
         $db_user = ini_get("mysql.default_user");
         $db_pass = ini_get("mysql.default_password");
         $this->db_name=$database;
+        $this->db_table=$table;
         $this->db = new mysqli($db_host, $db_user, $db_pass, $this->db_name);
         if ($this->db->connect_error) {
             die("Connection failed: " . $this->db->connect_error);
         }
     }
 
-    public function getdb() {
+    public function getDb() {
         return $this->db;
     }
 
+    public function getTable() {
+        return $this->db_table;
+    }
+
     public function close() {
-        return $this->db->close();
+        return $this->getDb()->close();
     }
 
     // escape a given string into mysqli query
     public function escape($string) {
-        $this->db->real_escape_string($string);
+        $this->getDb()->real_escape_string($string);
     }
 
     // return an array in associate with a row set from the database
-    public function processRowSet ($rowSet, $singleRow=false) {
+    public function processRowSet($rowSet, $singleRow=false) {
         $resultArray = array();
         while ($row = $rowSet->fetch_assoc()) {
             array_push($resultArray,$row);
@@ -44,8 +50,8 @@ class PacaDb {
     }
 
     // select rows from the database
-    public function select($table, $where, $singleRow=false) {
-        $sql = "SELECT * FROM $table WHERE $where";
+    public function select($where, $singleRow=false) {
+        $sql = "SELECT * FROM ".$this->getTable()." WHERE $where";
         $result = $this->db->query($sql);
         if ($result->num_rows() == 0) {
             return null;
@@ -57,23 +63,23 @@ class PacaDb {
     }
 
     // updates a current row in the database
-    public function update($data, $table, $where) {
+    public function update($data, $where) {
         foreach ($data as $column => $value) {
-            $sql = "UPDATE $table SET $column = $value WHERE $where";
+            $sql = "UPDATE ".$this->getTable()." SET $column = $value WHERE $where";
             $this->db->query($sql) or die($this->db->error);
         }
         return true;
     }
     
     // delete row(s) in the database
-    public function delete($table, $where) {
-        $sql = "DELETE FROM $table WHERE $where";
-        $this->db->query($sql) or die($this->db->error);
+    public function delete($where) {
+        $sql = "DELETE FROM ".$this->getTable()." WHERE $where";
+        $this->getDb()->query($sql) or die($this->getDb()->error);
         return true;
     }
 
     // inserts a new row into th database
-    public function insert($data, $table) {
+    public function insert($data) {
         $columns = "";
         $values = "";
         foreach ($data as $column => $value){
@@ -82,10 +88,10 @@ class PacaDb {
             $values .= ($values == "") ? "" : ", ";
             $values .= $value;
         }
-        $sql = "INSERT INTO $table ($columns) values ($values)";
-        $this->db->query($sql) or die($this->db->error);
+        $sql = "INSERT INTO ".$this->getTable()." ($columns) values ($values)";
+        $this->getDb()->query($sql) or die($this->getDb()->error);
 
-        return $this->db->insert_id;
+        return $this->getDb()->insert_id;
     }
     
 }
