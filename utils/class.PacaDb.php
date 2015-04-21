@@ -4,18 +4,18 @@
 class PacaDb {
 
     private $db;
-    private $db_name;
-    private $db_table;
+    private $dbName;
+    private $dbTable;
 
     // open a connection to the database
     public function __construct() {
-        $paca_ini = parse_ini_file("/etc/php5/apache2/conf.d/paca.ini");
-        $db_host = $paca_ini["paca_host"];
-        $db_user = $paca_ini["paca_user"];
-        $db_pass = $paca_ini["paca_password"];
-        $this->db_name = $paca_ini["paca_database"];
-        $this->db_table = $paca_ini["paca_table"];
-        $this->db = new mysqli($db_host, $db_user, $db_pass, $this->db_name);
+        $pacaIni = parse_ini_file("/etc/php5/apache2/conf.d/paca.ini");
+        $dbHost = $pacaIni["paca_host"];
+        $dbUser = $pacaIni["paca_user"];
+        $dbPass = $pacaIni["paca_password"];
+        $this->dbName = $pacaIni["paca_database"];
+        $this->dbTable = $pacaIni["paca_table"];
+        $this->db = new mysqli($dbHost, $dbUser, $dbPass, $this->dbName);
         if ($this->db->connect_error) {
             die("Connection failed: " . $this->db->connect_error);
         }
@@ -26,7 +26,7 @@ class PacaDb {
     }
 
     public function getTable() {
-        return $this->db_table;
+        return $this->dbTable;
     }
 
     public function close() {
@@ -53,7 +53,7 @@ class PacaDb {
     // select rows from the database
     public function select($where, $singleRow=false) {
         $sql = "SELECT * FROM ".$this->getTable()." WHERE $where";
-        $result = $this->db->query($sql);
+        $result = $this->getDb()->query($sql);
         if ($result->num_rows() == 0) {
             return null;
         }
