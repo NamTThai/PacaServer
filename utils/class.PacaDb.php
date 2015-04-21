@@ -7,20 +7,24 @@ class PacaDb {
     private $db;
 
     // open a connection to the database
-    public function __construct($database='paca'){
+    public function __construct($database='paca') {
         $db_host = ini_get("mysql.default_host");
         $db_user = ini_get("mysql.default_user");
         $db_pass = ini_get("mysql.default_password");
         $this->db_name=$database;
         $this->db = new mysqli($db_host, $db_user, $db_pass, $this->db_name);
+        if ($this->db->connect_error) {
+            die("Connection failed: " . $this->db->connect_error);
+        }
     }
 
-}
-/*
-    public function getdb(){
+    public function getdb() {
         return $this->db;
     }
 
+    public function close() {
+        return $this->db->close();
+    }
 
     // escape a given string into mysqli query
     public function escape($database,$string){
@@ -155,6 +159,6 @@ class User {
 function get($db,$id)  {
     $result = $db->select($db->getdb(),'login', "id = '$id'");   
     return new User($result);  
-}*/
+}
 
 ?>
