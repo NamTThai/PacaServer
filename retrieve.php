@@ -1,6 +1,6 @@
 <?php
 
-require_once 'class.Picture.php';
+require_once "utils/class.Picture.php";
 
     $head = unserialize(file_get_contents("../Pictures/data.Head.php"));
 

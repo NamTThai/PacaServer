@@ -1,5 +1,5 @@
 <?php
-require_once 'class.Picture.php';
+require_once 'utils/class.Picture.php';
     
     $file_path = "../Pictures/";
 
