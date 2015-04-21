@@ -41,9 +41,9 @@ class PacaDb {
     public function processRowSet($rowSet, $singleRow=false) {
         $resultArray = array();
         while ($row = $rowSet->fetch_assoc()) {
-            array_push($resultArray,$row);
+            array_push($resultArray, $row);
         }
-        if($singleRow==true) {
+        if ($singleRow == true) {
             return $resultArray[0];
         }
         return $resultArray;
@@ -57,16 +57,16 @@ class PacaDb {
             return null;
         }
         if ($result->num_rows() == 1) {
-            return $this->processRowSet($result,true);
+            return $this->processRowSet($result, true);
         }
-        return $this->processRowSet($result,$singleRow);
+        return $this->processRowSet($result, $singleRow);
     }
 
     // updates a current row in the database
     public function update($data, $where) {
         foreach ($data as $column => $value) {
             $sql = "UPDATE ".$this->getTable()." SET $column = $value WHERE $where";
-            $this->db->query($sql) or die($this->db->error);
+            $this->getDb()->query($sql) or die($this->getDb()->error);
         }
         return true;
     }
