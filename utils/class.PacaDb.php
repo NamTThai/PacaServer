@@ -27,49 +27,53 @@ class PacaDb {
     }
 
     // escape a given string into mysqli query
-    public function escape($database,$string){
-        mysqli_real_escape_string($database,$string);
+    public function escape($string) {
+        $this->db->real_escape_string($string);
     }
 
     // return an array in associate with a row set from the database
-    public function processRowSet ($rowSet,$singleRow=false){
+    public function processRowSet ($rowSet, $singleRow=false) {
         $resultArray = array();
-        while($row = mysqli_fetch_assoc($rowSet)) 
+        while ($row = $rowSet->fetch_assoc()) {
             array_push($resultArray,$row);
-        if($singleRow==true)
+        }
+        if($singleRow==true) {
             return $resultArray[0];
+        }
         return $resultArray;
     }
 
     // select rows from the database
-    public function select($database,$table,$where,$singleRow=false){
+    public function select($table, $where, $singleRow=false) {
         $sql = "SELECT * FROM $table WHERE $where";
-        $result = mysqli_query($database,$sql);
-        if(mysqli_num_rows($result)==0)
+        $result = $this->db->query($sql);
+        if ($result->num_rows() == 0) {
             return null;
-        if(mysqli_num_rows($result)==1)
+        }
+        if ($result->num_rows() == 1) {
             return $this->processRowSet($result,true);
+        }
         return $this->processRowSet($result,$singleRow);
     }
 
     // updates a current row in the database
-    public function update($database,$data,$table,$where){
-        foreach ($data as $column => $value){
+    public function update($data, $table, $where) {
+        foreach ($data as $column => $value) {
             $sql = "UPDATE $table SET $column = $value WHERE $where";
-            mysqli_query($database,$sql) or die(mysqli_error($database));
+            $this->db->query($sql) or die($this->db->error);
         }
         return true;
     }
     
     // delete row(s) in the database
-    public function delete($database,$table,$where){
+    public function delete($table, $where) {
         $sql = "DELETE FROM $table WHERE $where";
-        mysqli_query($database,$sql) or die(mysqli_error($database));
+        $this->db->query($sql) or die($this->db->error);
         return true;
     }
 
     // inserts a new row into th database
-    public function insert($database,$data,$table){
+    public function insert($data, $table) {
         $columns = "";
         $values = "";
         foreach ($data as $column => $value){
@@ -79,9 +83,9 @@ class PacaDb {
             $values .= $value;
         }
         $sql = "INSERT INTO $table ($columns) values ($values)";
-        mysqli_query($database,$sql) or die(mysqli_error($database));
+        $this->db->query($sql) or die($this->db->error);
 
-        return mysqli_insert_id($database);
+        return $this->db->insert_id;
     }
     
 }
