@@ -38,14 +38,20 @@ class PacaDb {
         return $this->dbTable;
     }
     
-    public function insert_picture($name, $timestamp, $lat, $lng) {
+    public function insertPicture($name, $timestamp, $lat, $lng) {
         $data = array(
             "address" => "'".$name."'",
             "timestamp" => "'".$timestamp."'",
             "lat" => $lat,
             "lng" => $lng,
         );
-        echo $this->insert($data);
+        return $this->insert($data);
+    }
+    
+    public function retrievePictures($lat, $lng) {
+        $var = "id, address, ( 3959 * acos( cos( radians($lat) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( lat ) ) ) ) AS distance";
+        $where = "distance > 0 ORDER BY id DESC LIMIT 0 , 10";
+        return $this->select_having($where, $var);
     }
 
     // return an array in associate with a row set from the database
@@ -61,13 +67,13 @@ class PacaDb {
     }
 
     // select rows from the database
-    private function select($where, $singleRow=false) {
-        $sql = "SELECT * FROM ".$this->getTable()." WHERE $where";
+    private function select_having($where, $var="*", $singleRow=false) {
+        $sql = "SELECT ".$var." FROM ".$this->getTable()." HAVING $where";
         $result = $this->getDb()->query($sql);
-        if ($result->num_rows() == 0) {
+        if ($result->num_rows == 0) {
             return null;
         }
-        if ($result->num_rows() == 1) {
+        if ($result->num_rows == 1) {
             return $this->processRowSet($result, true);
         }
         return $this->processRowSet($result, $singleRow);
