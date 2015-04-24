@@ -20,6 +20,15 @@ class PacaDb {
             die("Connection failed: " . $this->db->connect_error);
         }
     }
+    
+    public function close() {
+        return $this->getDb()->close();
+    }
+    
+    // escape a given string into mysqli query
+    public function escape($string) {
+        $this->getDb()->real_escape_string($string);
+    }
 
     public function getDb() {
         return $this->db;
@@ -28,18 +37,19 @@ class PacaDb {
     public function getTable() {
         return $this->dbTable;
     }
-
-    public function close() {
-        return $this->getDb()->close();
-    }
-
-    // escape a given string into mysqli query
-    public function escape($string) {
-        $this->getDb()->real_escape_string($string);
+    
+    public function insert_picture($name, $timestamp, $lat, $lng) {
+        $data = array(
+            "address" => "'".$name."'",
+            "timestamp" => "'".$timestamp."'",
+            "lat" => $lat,
+            "lng" => $lng,
+        );
+        echo $this->insert($data);
     }
 
     // return an array in associate with a row set from the database
-    public function processRowSet($rowSet, $singleRow=false) {
+    private function processRowSet($rowSet, $singleRow=false) {
         $resultArray = array();
         while ($row = $rowSet->fetch_assoc()) {
             array_push($resultArray, $row);
@@ -51,7 +61,7 @@ class PacaDb {
     }
 
     // select rows from the database
-    public function select($where, $singleRow=false) {
+    private function select($where, $singleRow=false) {
         $sql = "SELECT * FROM ".$this->getTable()." WHERE $where";
         $result = $this->getDb()->query($sql);
         if ($result->num_rows() == 0) {
@@ -64,7 +74,7 @@ class PacaDb {
     }
 
     // updates a current row in the database
-    public function update($data, $where) {
+    private function update($data, $where) {
         foreach ($data as $column => $value) {
             $sql = "UPDATE ".$this->getTable()." SET $column = $value WHERE $where";
             $this->getDb()->query($sql) or die($this->getDb()->error);
@@ -73,14 +83,14 @@ class PacaDb {
     }
     
     // delete row(s) in the database
-    public function delete($where) {
+    private function delete($where) {
         $sql = "DELETE FROM ".$this->getTable()." WHERE $where";
         $this->getDb()->query($sql) or die($this->getDb()->error);
         return true;
     }
 
     // inserts a new row into th database
-    public function insert($data) {
+    private function insert($data) {
         $columns = "";
         $values = "";
         foreach ($data as $column => $value){
@@ -89,6 +99,7 @@ class PacaDb {
             $values .= ($values == "") ? "" : ", ";
             $values .= $value;
         }
+        
         $sql = "INSERT INTO ".$this->getTable()." ($columns) values ($values)";
         $this->getDb()->query($sql) or die($this->getDb()->error);
 
