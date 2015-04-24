@@ -5,7 +5,7 @@ require_once 'utils/class.PacaDb.php';
     
     $db = new PacaDb();
     
-    $addresses = $db->retrievePictures(100, 200);
+    $addresses = $db->retrievePictures($_GET['lat'], $_GET['lng']);
 
     $allPictures = array();
     

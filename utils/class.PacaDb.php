@@ -50,7 +50,7 @@ class PacaDb {
     
     public function retrievePictures($lat, $lng) {
         $var = "id, address, ( 3959 * acos( cos( radians($lat) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( lat ) ) ) ) AS distance";
-        $where = "distance > 0 ORDER BY id DESC LIMIT 0 , 10";
+        $where = "distance < 10000 ORDER BY distance LIMIT 0 , 10";
         return $this->select_having($where, $var);
     }
 
