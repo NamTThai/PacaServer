@@ -49,9 +49,20 @@ class PacaDb {
     }
     
     public function retrievePictures($lat, $lng) {
-        $var = "id, address, ( 3959 * acos( cos( radians($lat) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( lat ) ) ) ) AS distance";
-        $where = "distance < 10000 ORDER BY distance LIMIT 0 , 10";
-        return $this->select_having($where, $var);
+        $distance = 25;
+        $maxDistance = 1000;
+        $numRows = 0;
+        $maxDisplay = 20;
+        $var = "id, address, timestamp, likes, ( 3959 * acos( cos( radians($lat) ) * cos( radians( lat ) ) * cos( radians( lng ) - radians($lng) ) + sin( radians($lat) ) * sin( radians( lat ) ) ) ) AS distance";
+        $result;
+        while ($numRows < $maxDisplay && $distance < $maxDistance) {
+            $where = "distance < $distance ORDER BY timestamp DESC LIMIT 0 , $maxDisplay";
+            $sql = "SELECT $var FROM ".$this->getTable()." HAVING $where";
+            $result = $this->getDb()->query($sql);
+            $numRows = $result->num_rows;
+            $distance *= 2;
+        }
+        return $this->processRowSet($result, $singleRow);
     }
 
     // return an array in associate with a row set from the database
