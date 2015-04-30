@@ -64,6 +64,11 @@ class PacaDb {
         }
         return $this->processRowSet($result, $singleRow);
     }
+    
+    public function updateLikes($id, $likes) {
+        $data = array("likes" => $likes);
+        return $this->update($data, "id=$id");
+    }
 
     // return an array in associate with a row set from the database
     private function processRowSet($rowSet, $singleRow=false) {
@@ -78,8 +83,8 @@ class PacaDb {
     }
 
     // select rows from the database
-    private function select_having($where, $var="*", $singleRow=false) {
-        $sql = "SELECT ".$var." FROM ".$this->getTable()." HAVING $where";
+    private function select($where, $var="*", $singleRow=false) {
+        $sql = "SELECT ".$var." FROM ".$this->getTable()." WHERE $where";
         $result = $this->getDb()->query($sql);
         if ($result->num_rows == 0) {
             return null;

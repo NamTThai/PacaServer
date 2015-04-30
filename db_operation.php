@@ -12,6 +12,11 @@ require_once 'utils/class.PacaDb.php';
             $lng = $_POST['lng'];
             echo $db->insertPicture($file_name, $timestamp, $lat, $lng);
             break;
+        case "1":
+            $id = $_POST['id'];
+            $likes = $_POST['likes'];
+            echo $db->updateLikes($id, $likes);
+            break;
     }
     
     $db->close();
