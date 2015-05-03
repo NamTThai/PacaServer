@@ -6,7 +6,7 @@ require_once 'utils/class.Picture.php';
     
     if (move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $filePath)) {
         echo $fileName;
-    } else{
+    } else {
         echo (int) false;
     }
     
